@@ -1,0 +1,58 @@
+{
+    "server_assets": [
+        {
+            "name": "Server 1",
+            "id": 1,
+            "freespace": 50,
+            "usedspace": 50,
+            "location": "Data Center 1",
+            "belonging_group": "Group 1",
+            "dataset": {
+               "uber": "/data/uber",
+               "key2": "value2",
+               "key3": "value3"
+            }
+        },
+        
+        {
+            "name": "Server A",
+            "id": 1,
+            "freespace": 800,
+            "usedspace": 500,
+            "location": "New York",
+            "belonging_group": "Group A"
+        },
+        {
+            "name": "Server B",
+            "id": 2,
+            "freespace": 1000,
+            "usedspace": 0,
+            "location": "London",
+            "belonging_group": "Group B"
+        },
+        {
+            "name": "Server C",
+            "id": 3,
+            "freespace": 2000,
+            "usedspace": 1000,
+            "location": "Paris",
+            "belonging_group": "Group B"
+        },
+        {
+            "name": "Server C",
+            "id": 3,
+            "freespace": 200,
+            "usedspace": 900,
+            "location": "Paris",
+            "belonging_group": "Group B"
+        },
+        {
+            "name": "Server D",
+            "id": 4,
+            "freespace": 100,
+            "usedspace": 200,
+            "location": "Paris",
+            "belonging_group": "Group B"
+        }
+    ]
+}
