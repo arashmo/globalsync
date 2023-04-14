@@ -28,7 +28,11 @@ type ServerAssets struct {
 func main() {
 	router := gin.Default()
 
-	router.GET("/search", func(c *gin.Context) {
+	router.GET("/search",SearchHandler )
+	router.Run(":8080")
+
+}
+	func SearchHandler(c *gin.Context) {
 		// Load JSON file
 		jsonFile, err := ioutil.ReadFile("servers.json")
 		if err != nil {
@@ -128,7 +132,4 @@ func main() {
 		}
 
 		c.JSON(http.StatusOK, results)
-	})
-
-	router.Run(":8080")
-}
+	}
