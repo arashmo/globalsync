@@ -1,13 +1,8 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
-	"net/http"
-	"strings"
-	"strconv"
 
+	sshsyncer "github.com/arashmo/globalsync/sshsyncer"
 	"github.com/gin-gonic/gin"
 )
 
@@ -28,8 +23,12 @@ type ServerAssets struct {
 func main() {
 	router := gin.Default()
 
-	router.GET("/search",SearchHandler )
+	router.GET("/search", )
 	router.Run(":8080")
 
 }
+func sa(){
+sshsyncer.copyFiles
+}
+
 	

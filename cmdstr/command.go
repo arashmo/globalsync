@@ -1,4 +1,4 @@
-package main
+package cmdstr
 
 import (
 	"encoding/json"

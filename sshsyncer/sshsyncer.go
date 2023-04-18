@@ -1,4 +1,4 @@
-package sshcopy
+package sshsyncer
 
 import (
 	"io"
