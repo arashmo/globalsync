@@ -1,34 +1,28 @@
 package main
 
 import (
-
-	sshsyncer "github.com/arashmo/globalsync/sshsyncer"
+//	"github.com/arashmo/globalsync/db"
+	"log"
+  "github.com/arashmo/globalsync/datasets"
 	"github.com/gin-gonic/gin"
+	_ "github.com/go-sql-driver/mysql"
+
 )
 
-type ServerAsset struct {
-	Name           string `json:"name"`
-	ID             int    `json:"id"`
-	FreeSpace      int    `json:"freespace"`
-	UsedSpace      int    `json:"usedspace"`
-	Location       string `json:"location"`
-	BelongingGroup string `json:"belonging_group"`
-	Dataset        map[string]string `json:"dataset"`
-}
-
-type ServerAssets struct {
-	ServerAssets []ServerAsset `json:"server_assets"`
-}
-
 func main() {
+	
+	
+
 	router := gin.Default()
 
-	router.GET("/search", )
-	router.Run(":8080")
+	router.GET("/datasets", datasets.GetDatasets)
+	router.GET("/datasets/search",datasets.SearchDatasets)
+	router.GET("/datasets/:id", datasets.GetDataset)
+	router.POST("/datasets", datasets.CreateDataset)
+	router.PUT("/datasets/:id", datasets.UpdateDataset)
 
-}
-func sa(){
-sshsyncer.copyFiles
+	if err := router.Run(":8080"); err != nil {
+		log.Fatal(err)
+	}
 }
 
-	

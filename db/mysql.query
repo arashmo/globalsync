@@ -22,7 +22,9 @@ CREATE TABLE owner_groups (
 CREATE TABLE datasets (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(255),
-  version VARCHAR(255)
+  size INT,
+  version VARCHAR(255),
+  status VARCHAR(255)
 );
 
 CREATE TABLE servers (
@@ -48,7 +50,7 @@ CREATE TABLE server_datasets (
   FOREIGN KEY (server_id) REFERENCES servers(id),
   FOREIGN KEY (dataset_id) REFERENCES datasets(id)
 );
-// psudu data_entry 
+-- psudu data_entry 
 
 -- datacenters table
 INSERT INTO datacenters (name, location, comment) VALUES
