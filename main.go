@@ -1,17 +1,18 @@
 package main
 
 import (
-//	"github.com/arashmo/globalsync/db"
-	"log"
-  "github.com/arashmo/globalsync/datasets"
-	"github.com/gin-gonic/gin"
-	_ "github.com/go-sql-driver/mysql"
+"log"
+"github.com/arashmo/globalsync/datasets"
+"github.com/arashmo/globalsync/sshsync"
+"github.com/gin-gonic/gin"
+_ "github.com/go-sql-driver/mysql"
 
 )
 
 func main() {
 	
-	
+	sshsynci()
+
 
 	router := gin.Default()
 
@@ -26,3 +27,17 @@ func main() {
 	}
 }
 
+func sshsynci(){
+	opts := &sshsync.Options{
+        SourceDir:      "/home/araddsh/1",
+        DestinationDir: "localhost:/home/arash/kir",
+        Username:       "arash",
+        Password:       "klfjhpi4sswo44riswwor??",
+        Host:           "localhost:22",
+    }
+
+    err := sshsync.SyncFiles(opts)
+    if err != nil {
+        panic(err)
+    }
+}
