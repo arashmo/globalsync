@@ -11,7 +11,7 @@ _ "github.com/go-sql-driver/mysql"
 
 func main() {
 	
-	sshsynci()
+	//sshsynci()
 
 
 	router := gin.Default()
@@ -21,6 +21,8 @@ func main() {
 	router.GET("/datasets/:id", datasets.GetDataset)
 	router.POST("/datasets", datasets.CreateDataset)
 	router.PUT("/datasets/:id", datasets.UpdateDataset)
+	router.GET("/searchdst/", sshsync.SearchDstData)
+
 
 	if err := router.Run(":8080"); err != nil {
 		log.Fatal(err)

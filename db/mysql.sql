@@ -42,17 +42,27 @@ CREATE TABLE servers (
   FOREIGN KEY (owner_group_id) REFERENCES owner_groups(id)
 );
 
-CREATE TABLE server_datasets (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  location_on_disk VARCHAR(255),
-  server_id INT,
-  dataset_id INT,
-  FOREIGN KEY (server_id) REFERENCES servers(id),
-  FOREIGN KEY (dataset_id) REFERENCES datasets(id)
-);
--- psudu data_entry 
 
--- datacenters table
+
+
+CREATE TABLE server_datasets (
+    id SERIAL PRIMARY KEY,
+    server_id INT NOT NULL REFERENCES servers(id),
+    dataset_id INT NOT NULL REFERENCES datasets(id),
+    attached_storage_id INT NOT NULL REFERENCES attached_storage(id),
+    folder_name VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE attached_storage (
+  id SERIAL PRIMARY KEY,
+  server_id INTEGER REFERENCES servers(id),
+  location VARCHAR(255) NOT NULL
+);
+
+
+
+--datacenters table
 INSERT INTO datacenters (name, location, comment) VALUES
 ('Datacenter 1', 'New York', 'Primary datacenter'),
 ('Datacenter 2', 'Los Angeles', 'Secondary datacenter');
@@ -78,15 +88,28 @@ INSERT INTO datasets (name, version) VALUES
 
 -- servers table
 INSERT INTO servers (hostname, ip_address, cpupercent, usedgpus, freedisk, owner_group_id, rack_id, datacenter_id) VALUES
-('server1', '192.168.1.1', 20, 2, 500, 1, 1, 1),
-('server2', '192.168.1.2', 10, 0, 1000, 1, 1, 1),
-('server3', '192.168.2.1', 30, 4, 200, 2, 3, 2),
-('server4', '192.168.2.2', 5, 1, 750, 2, 3, 2);
+('server1', '192.168.1.1', 20, 2, 500, 1, 5, 1),
+('server2', '192.168.1.2', 10, 0, 1000, 1, 6, 1),
+('server3', '192.168.2.1', 30, 4, 200, 2, 7, 2),
+('server4', '192.168.2.2', 5, 1, 750, 2, 8, 2);
 
 -- server_datasets table
-INSERT INTO server_datasets (location_on_disk, server_id, dataset_id) VALUES
-('/mnt/data1', 1, 1),
-('/mnt/data2', 1, 2),
-('/mnt/data3', 2, 1),
-('/mnt/data4', 3, 2),
-('/mnt/data5', 4, 3);
+INSERT INTO server_datasets (dataset_id, server_id, attached_storage_id, folder_name) VALUES
+    (1, 1, 1, 'data_folder_1'),
+    (2, 1, 2, 'data_folder_2'),
+    (3, 2, 3, 'data_folder_3'),
+    (4, 2, 1, 'data_folder_4'),
+    (5, 3, 2, 'data_folder_5');
+
+
+-- psudu data_entry 
+INSERT INTO attached_storage (server_id, location) VALUES
+  (10, '/path/to/attached/storage/for/server1'),
+  (11, '/path/to/attached/storage/for/server2'),
+  (12, '/path/to/attached/storage/for/server3');
+
+----
+SELECT servers.ip_address, attached_storage.location
+FROM servers
+JOIN attached_storage ON servers.id = attached_storage.server_id
+WHERE servers.hostname = 'server1';
