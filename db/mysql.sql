@@ -102,7 +102,7 @@ INSERT INTO server_datasets (dataset_id, server_id, attached_storage_id, folder_
     (5, 3, 2, 'data_folder_5');
 
 
--- psudu data_entry 
+-- attached_storage data_entry 
 INSERT INTO attached_storage (server_id, location) VALUES
   (10, '/path/to/attached/storage/for/server1'),
   (11, '/path/to/attached/storage/for/server2'),

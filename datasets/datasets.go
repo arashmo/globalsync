@@ -21,9 +21,7 @@ type Dataset struct {
 }
 type ServerDataset struct {
     ID            int    `json:"id"`
-    LocationOnDisk string `json:"location_on_disk"`
-    ServerName    string `json:"server_name"`
-    DatasetName   string `json:"dataset_name"`
+    location_on_disk string `json:"location_on_disk"`
 	Name          string `json: "name"`
 	Hostname      string `json: "hostname"`
 	IP_address    string `json: "ip_address"`
@@ -79,7 +77,7 @@ func SearchDatasets(c *gin.Context) {
 	datasets := []ServerDataset{}
 	for rows.Next() {
 		var dataset ServerDataset
-		if err := rows.Scan(&dataset.Name, &dataset.Hostname, &dataset.IP_address, &dataset.LocationOnDisk, &dataset.Folder_name); err != nil {
+		if err := rows.Scan(&dataset.Name, &dataset.Hostname, &dataset.IP_address, &dataset.location_on_disk, &dataset.Folder_name); err != nil {
 			log.Fatal(err)
 		}
 		datasets = append(datasets, dataset)
