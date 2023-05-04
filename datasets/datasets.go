@@ -24,6 +24,10 @@ type ServerDataset struct {
     LocationOnDisk string `json:"location_on_disk"`
     ServerName    string `json:"server_name"`
     DatasetName   string `json:"dataset_name"`
+	Name          string `json: "name"`
+	Hostname      string `json: "hostname"`
+	IP_address    string `json: "ip_address"`
+	Folder_name   string  `json: "folder_name"`
 }
 
 func GetDatasets(c *gin.Context) {
@@ -66,11 +70,7 @@ func SearchDatasets(c *gin.Context) {
 	searchTerm := c.Query("search")
 
 	rows, err := db.DB.Query(`
-        SELECT d.name, s.hostname, sd.location_on_disk
-        FROM datasets d
-        JOIN server_datasets sd ON sd.dataset_id = d.id
-        JOIN servers s ON s.id = sd.server_id
-        WHERE d.name LIKE ?
+	SELECT d.name, s.hostname, s.ip_address, ass.location, sd.folder_name FROM datasets d JOIN server_datasets sd ON sd.dataset_id = d.id JOIN servers s ON s.id = sd.id JOIN attached_storage ass ON ass.id = s.id WHERE d.name LIKE ?
     `, "%"+searchTerm+"%")
 	if err != nil {
 		log.Fatal(err)
@@ -79,7 +79,7 @@ func SearchDatasets(c *gin.Context) {
 	datasets := []ServerDataset{}
 	for rows.Next() {
 		var dataset ServerDataset
-		if err := rows.Scan(&dataset.DatasetName, &dataset.ServerName, &dataset.LocationOnDisk); err != nil {
+		if err := rows.Scan(&dataset.Name, &dataset.Hostname, &dataset.IP_address, &dataset.LocationOnDisk, &dataset.Folder_name); err != nil {
 			log.Fatal(err)
 		}
 		datasets = append(datasets, dataset)

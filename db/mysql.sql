@@ -109,7 +109,11 @@ INSERT INTO attached_storage (server_id, location) VALUES
   (12, '/path/to/attached/storage/for/server3');
 
 ----
-SELECT servers.ip_address, attached_storage.location
-FROM servers
-JOIN attached_storage ON servers.id = attached_storage.server_id
-WHERE servers.hostname = 'server1';
+
+
+SELECT d.name, s.hostname, s.ip_address, ass.location, sd.folder_name
+FROM datasets d
+JOIN server_datasets sd ON sd.dataset_id = d.id
+JOIN servers s ON s.id = sd.server_id
+JOIN attached_storage ass ON ass.server_id = s.id
+WHERE d.name LIKE 'Dataset 1';
