@@ -58,6 +58,7 @@ CREATE TABLE attached_storage (
   id SERIAL PRIMARY KEY,
   server_id INTEGER REFERENCES servers(id),
   location VARCHAR(255) NOT NULL
+  UNIQUE (server_id, location)
 );
 
 
