@@ -1,4 +1,4 @@
-package  sshsync 
+package  servers 
 import (
 	"github.com/arashmo/globalsync/db"
 		"fmt"

@@ -68,7 +68,10 @@ func SearchDatasets(c *gin.Context) {
 	searchTerm := c.Query("search")
 
 	rows, err := db.DB.Query(`
-	SELECT d.name, s.hostname, s.ip_address, ass.location, sd.folder_name FROM datasets d JOIN server_datasets sd ON sd.dataset_id = d.id JOIN servers s ON s.id = sd.id JOIN attached_storage ass ON ass.id = s.id WHERE d.name LIKE ?
+	SELECT d.name, s.hostname, s.ip_address, ass.location, sd.folder_name FROM datasets d 
+	JOIN server_datasets sd ON sd.dataset_id = d.id 
+	JOIN servers s ON s.id = sd.id 
+	JOIN attached_storage ass ON ass.id = s.id WHERE d.name LIKE ?
     `, "%"+searchTerm+"%")
 	if err != nil {
 		log.Fatal(err)

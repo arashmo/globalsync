@@ -4,6 +4,7 @@ import (
 "log"
 "github.com/arashmo/globalsync/datasets"
 "github.com/arashmo/globalsync/sshsync"
+"github.com/arashmo/globalsync/servers"
 "github.com/gin-gonic/gin"
 _ "github.com/go-sql-driver/mysql"
 
@@ -21,7 +22,7 @@ func main() {
 	router.GET("/datasets/:id", datasets.GetDataset)
 	router.POST("/datasets", datasets.CreateDataset)
 	router.PUT("/datasets/:id", datasets.UpdateDataset)
-	router.GET("/searchdst/", sshsync.SearchDstData)
+	router.GET("/searchdst/", servers.SearchDstData)
 
 
 	if err := router.Run(":8080"); err != nil {
