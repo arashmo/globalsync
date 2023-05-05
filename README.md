@@ -1,11 +1,12 @@
 #### Globalsync ( pronounced globalsynch)
 
 ----
-an opensource software Developed by Arash Mohammadreza Mohammadi for managing Data could be file or folder  across a cluster of servers, so that for example you may need to have a set of data that shall be synchronized across sets of servers this software will let you do it .
+an opensource software Developed from scratch for managing Data could be file or folder  across a cluster of servers, so that for example you may need to have a set of data that shall be synchronized across sets of servers this software will let you do it .
+any contributions are welcomed.
 
 
 1. it is capable to find the closest available source that match the requirements 
-2. it will offer the Destinations that has capability to recieve that data based on the available capacity 
+2. it will offer the Destinations that has capability to receive that data based on the available capacity 
 3. the software is agentless can communicates  with servers through ssh and leverage the rsync to perform data transfer
 ----
 ##### to start 
@@ -18,7 +19,7 @@ run the main.go , one may wish to create a systemd runner out of binary file or 
 1. create a database, test data creation through scripts or inside the program 
 2. create docker image and kubernetes manifest for the ease of deployment 
 3. create a webhook for copy action based on data sanitization on RDBMS and user input validator 
-4. create a frontend for it 
+4. create a frontend, i suggest react library  
 
 ##### support
 this software has been launched as beta there is no support, and its provided on  basis of "AS IS" without support or warranty  and all risk taken to use, redistribute is on the user side and developer has no responsibility regarding use, deployment, distribution in either test or productions environment.
