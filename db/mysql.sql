@@ -57,7 +57,7 @@ CREATE TABLE server_datasets (
 CREATE TABLE attached_storage (
   id SERIAL PRIMARY KEY,
   server_id INTEGER REFERENCES servers(id),
-  location VARCHAR(255) NOT NULL
+  location VARCHAR(255) NOT NULL,
   UNIQUE (server_id, location)
 );
 
@@ -70,10 +70,10 @@ INSERT INTO datacenters (name, location, comment) VALUES
 
 -- racks table
 INSERT INTO racks (number, aisle_number, location, datacenter_id) VALUES
-(1, 1, 'North-East corner', 1),
-(2, 1, 'North-West corner', 1),
-(3, 1, 'South-East corner', 2),
-(4, 1, 'South-West corner', 2);
+(1, 1, 'North-East corner', (SELECT id FROM datacenters ORDER BY RAND() LIMIT 1)),
+(2, 1, 'North-West corner', (SELECT id FROM datacenters ORDER BY RAND() LIMIT 1)),
+(3, 1, 'South-East corner', (SELECT id FROM datacenters ORDER BY RAND() LIMIT 1)),
+(4, 1, 'South-West corner', (SELECT id FROM datacenters ORDER BY RAND() LIMIT 1));
 
 -- owner_groups table
 INSERT INTO owner_groups (name) VALUES
@@ -89,32 +89,24 @@ INSERT INTO datasets (name, version) VALUES
 
 -- servers table
 INSERT INTO servers (hostname, ip_address, cpupercent, usedgpus, freedisk, owner_group_id, rack_id, datacenter_id) VALUES
-('server1', '192.168.1.1', 20, 2, 500, 1, 5, 1),
-('server2', '192.168.1.2', 10, 0, 1000, 1, 6, 1),
-('server3', '192.168.2.1', 30, 4, 200, 2, 7, 2),
-('server4', '192.168.2.2', 5, 1, 750, 2, 8, 2);
+('server1', '192.168.1.1', 20, 2, 500, (SELECT id FROM owner_groups ORDER BY RAND() LIMIT 1), (SELECT id FROM racks ORDER BY RAND() LIMIT 1), (SELECT id FROM datacenters ORDER BY RAND() LIMIT 1)),
+('server2', '192.168.1.2', 10, 0, 1000, (SELECT id FROM owner_groups ORDER BY RAND() LIMIT 1), (SELECT id FROM racks ORDER BY RAND() LIMIT 1), (SELECT id FROM datacenters ORDER BY RAND() LIMIT 1)),
+('server3', '192.168.2.1', 30, 4, 200, (SELECT id FROM owner_groups ORDER BY RAND() LIMIT 1), (SELECT id FROM racks ORDER BY RAND() LIMIT 1), (SELECT id FROM datacenters ORDER BY RAND() LIMIT 1)),
+('server4', '192.168.2.2', 5, 1, 750, (SELECT id FROM owner_groups ORDER BY RAND() LIMIT 1), (SELECT id FROM racks ORDER BY RAND() LIMIT 1), (SELECT id FROM datacenters ORDER BY RAND() LIMIT 1));
 
 -- server_datasets table
 INSERT INTO server_datasets (dataset_id, server_id, attached_storage_id, folder_name) VALUES
-    (1, 1, 1, 'data_folder_1'),
-    (2, 1, 2, 'data_folder_2'),
-    (3, 2, 3, 'data_folder_3'),
-    (4, 2, 1, 'data_folder_4'),
-    (5, 3, 2, 'data_folder_5');
+    ((SELECT id FROM datasets ORDER BY RAND() LIMIT 1), (SELECT id FROM servers ORDER BY RAND() LIMIT 1), (SELECT id FROM attached_storage ORDER BY RAND() LIMIT 1),'data_folder_1'),
+    ((SELECT id FROM datasets ORDER BY RAND() LIMIT 1), (SELECT id FROM servers ORDER BY RAND() LIMIT 1), (SELECT id FROM attached_storage ORDER BY RAND() LIMIT 1),'data_folder_2'),
+    ((SELECT id FROM datasets ORDER BY RAND() LIMIT 1), (SELECT id FROM servers ORDER BY RAND() LIMIT 1), (SELECT id FROM attached_storage ORDER BY RAND() LIMIT 1),'data_folder_3');
+ 
 
 
 -- attached_storage data_entry 
 INSERT INTO attached_storage (server_id, location) VALUES
-  (10, '/path/to/attached/storage/for/server1'),
-  (11, '/path/to/attached/storage/for/server2'),
-  (12, '/path/to/attached/storage/for/server3');
+  ((SELECT id FROM servers ORDER BY RAND() LIMIT 1), '/path/to/attached/storage/for/server1'),
+  ((SELECT id FROM servers ORDER BY RAND() LIMIT 1), '/path/to/attached/storage/for/server2'),
+  ((SELECT id FROM servers ORDER BY RAND() LIMIT 1), '/path/to/attached/storage/for/server3');
 
 ----
 
-
-SELECT d.name, s.hostname, s.ip_address, ass.location, sd.folder_name
-FROM datasets d
-JOIN server_datasets sd ON sd.dataset_id = d.id
-JOIN servers s ON s.id = sd.server_id
-JOIN attached_storage ass ON ass.server_id = s.id
-WHERE d.name LIKE 'Dataset 1';

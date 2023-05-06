@@ -9,7 +9,7 @@ import (
 		
 	)
 
-	func SearchDstData(c *gin.Context)  {
+	func Show_dst_data_location(c *gin.Context)  {
 		db.Connect("root@tcp(localhost:3306)/globalsync")
 		defer db.Close()
 	
@@ -45,6 +45,7 @@ import (
 	fmt.Println(results)
 		//return strings.Join(results, "\n")
 	}
+	
 	func SearchSrcData(c *gin.Context)  {
 		db.Connect("root@tcp(localhost:3306)/globalsync")
 		defer db.Close()

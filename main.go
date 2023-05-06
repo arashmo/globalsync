@@ -22,7 +22,7 @@ func main() {
 	router.GET("/datasets/:id", datasets.GetDataset)
 	router.POST("/datasets", datasets.CreateDataset)
 	router.PUT("/datasets/:id", datasets.UpdateDataset)
-	router.GET("/searchdst/", servers.SearchDstData)
+	router.GET("/showdstdata/", servers.Show_dst_data_location)
 
 
 	if err := router.Run(":8080"); err != nil {
@@ -39,6 +39,8 @@ func sshsynci(){
         Host:           "localhost:22",
     }
 
+
+	
     err := sshsync.SyncFiles(opts)
     if err != nil {
         panic(err)
