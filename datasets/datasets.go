@@ -29,7 +29,7 @@ type ServerDataset struct {
 }
 
 func GetDatasets(c *gin.Context) {
-	db.Connect("root@tcp(localhost:3306)/globalsync")
+	db.Connect("root@tcp(localhost:3306)/one")
 	defer db.Close()
 
 	rows, err := db.DB.Query("SELECT id, name, size, COALESCE(status, ''), version FROM datasets")
@@ -63,7 +63,7 @@ func GetDatasets(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": datasets})
 }
 func SearchDatasets(c *gin.Context) {
-	db.Connect("root@tcp(localhost:3306)/globalsync")
+	db.Connect("root@tcp(localhost:3306)/one")
 	defer db.Close()
 	searchTerm := c.Query("search")
 
