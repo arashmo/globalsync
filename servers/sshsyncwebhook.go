@@ -3,7 +3,7 @@ import (
 	"github.com/arashmo/globalsync/db"
 		"fmt"
 		"log"
-	//	"strings"
+		//"strings"
 		"github.com/gin-gonic/gin"
 		_ "github.com/go-sql-driver/mysql"
 		
@@ -45,7 +45,7 @@ import (
 	fmt.Println(results)
 		//return strings.Join(results, "\n")
 	}
-	func SearchSrcData(c *gin.Context)  {
+	func SearchSrcData(c *gin.Context) []string  {
 		db.Connect("root@tcp(localhost:3306)/globalsync")
 		defer db.Close()
 	
@@ -78,7 +78,8 @@ import (
 		if err := rows.Err(); err != nil {
 			log.Fatal(err)
 		}
-	fmt.Println(results)
+
+return  results
 		//return strings.Join(results, "\n")
 	}
 	
