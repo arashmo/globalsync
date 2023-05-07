@@ -5,31 +5,22 @@ import (
 "github.com/arashmo/globalsync/datasets"
 "github.com/arashmo/globalsync/sshsync"
 "github.com/arashmo/globalsync/servers"
-"github.com/arashmo/globalsync/db"
-
+//"github.com/arashmo/globalsync/db"
+"net/http"
 "github.com/gin-gonic/gin"
 _ "github.com/go-sql-driver/mysql"
 
 )
 func main() {
-	var err error
-	db.Connect("root@tcp(localhost:3306)/globalsync")
-	defer db.Close()
-    if err != nil {
-        log.Fatal(err)
-    }
-	if err := db.Ping(); err != nil {
-		// Database does not exist, create it
-		db, err = db.createDatabase(dsn)
-		if err != nil {
-			return nil, err
-		}
-	}
+	
 
-	return db, nil
-}
 	
 	router := gin.Default()
+
+	router.Static("/public", "./frontend/public")
+	router.GET("/", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "./frontend/public/index.html", nil)
+	  })
 
 	router.GET("/datasets", datasets.GetDatasets)
 	router.GET("/datasets/search",datasets.SearchDatasets)
