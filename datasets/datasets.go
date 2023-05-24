@@ -1,7 +1,7 @@
 package datasets
 
 import (
-"github.com/arashmo/globalsync/db"
+"github.com/arashmo/globalsync/dbo"
 	"fmt"
 	"log"
 	"net/http"
@@ -29,10 +29,8 @@ type ServerDataset struct {
 }
 
 func GetDatasets(c *gin.Context) {
-	db.Connect("root@tcp(localhost:3306)/one")
-	defer db.Close()
 
-	rows, err := db.DB.Query("SELECT id, name, size, COALESCE(status, ''), version FROM datasets")
+	rows, err := dbo.DB.Query("SELECT id, name, size, COALESCE(status, ''), version FROM datasets")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -63,11 +61,10 @@ func GetDatasets(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": datasets})
 }
 func SearchDatasets(c *gin.Context) {
-	db.Connect("root@tcp(localhost:3306)/one")
-	defer db.Close()
+
 	searchTerm := c.Query("search")
 
-	rows, err := db.DB.Query(`
+	rows, err := dbo.DB.Query(`
 	SELECT d.name, s.hostname, s.ip_address, ass.location, sd.folder_name FROM datasets d 
 	JOIN server_datasets sd ON sd.dataset_id = d.id 
 	JOIN servers s ON s.id = sd.id 
@@ -93,7 +90,7 @@ func SearchDatasets(c *gin.Context) {
 func GetDataset(c *gin.Context) {
 	id := c.Param("id")
 	var dataset Dataset
-	err := db.DB.QueryRow("SELECT id, name, size, status FROM datasets WHERE id = ?", id).Scan(&dataset.ID, &dataset.Name, &dataset.Size, &dataset.Status)
+	err := dbo.DB.QueryRow("SELECT id, name, size, status FROM datasets WHERE id = ?", id).Scan(&dataset.ID, &dataset.Name, &dataset.Size, &dataset.Status)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("dataset %s not found", id)})
@@ -112,7 +109,7 @@ func CreateDataset(c *gin.Context) {
 		return
 	}
 
-	result, err := db.DB.Exec("INSERT INTO datasets (name, size, status) VALUES (?, ?, ?)", dataset.Name, dataset.Size, dataset.Status)
+	result, err := dbo.DB.Exec("INSERT INTO datasets (name, size, status) VALUES (?, ?, ?)", dataset.Name, dataset.Size, dataset.Status)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -136,7 +133,7 @@ func UpdateDataset(c *gin.Context) {
 		return
 	}
 
-	_, err := db.DB.Exec("UPDATE datasets SET name = ?, size = ?, status = ? WHERE id = ?", dataset.Name, dataset.Size, dataset.Status, id)
+	_, err := dbo.DB.Exec("UPDATE datasets SET name = ?, size = ?, status = ? WHERE id = ?", dataset.Name, dataset.Size, dataset.Status, id)
 	if err != nil {
 		log.Fatal(err)
 	}

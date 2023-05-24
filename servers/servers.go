@@ -1,6 +1,6 @@
 package  servers 
 import (
-	"github.com/arashmo/globalsync/db"
+	"github.com/arashmo/globalsync/dbo"
 		"fmt"
 		"log"
 	//	"strings"
@@ -10,12 +10,11 @@ import (
 	)
 
 	func Show_dst_data_location(c *gin.Context)  {
-		db.Connect("root@tcp(localhost:3306)/one")
-		defer db.Close()
 	
+
 		searchTerm := c.Query("search")
 	
-		rows, err := db.DB.Query(`
+		rows, err := dbo.DB.Query(`
 			SELECT servers.ip_address, attached_storage.location
 			FROM servers
 			JOIN attached_storage ON servers.id = attached_storage.server_id
