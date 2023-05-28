@@ -1,42 +1,26 @@
 package main
 
 import (
-	"log"
-
 	"github.com/arashmo/globalsync/dbo"
+	"github.com/arashmo/globalsync/store"
+	"github.com/arashmo/globalsync/handler"
 	"github.com/gin-gonic/gin"
-		"github.com/arashmo/globalsync/servers"
-	//	"github.com/arashmo/globalsync/sshsync"
-	//	"github.com/gin-gonic/gin"
-	_ "github.com/go-sql-driver/mysql"
+	"log"
 )
 
-
-func main(){
-	db, err := dbo.Connect("user:password@/globalsync")
+func main() {
+	dsn := "root@tcp(localhost)/dbname"
+	db, err := dbo.Connect(dsn)
 	if err != nil {
-		log.Fatalf("Failed to connect to the database: %v", err)
+		log.Fatalf("failed to connect to the database: %v", err)
 	}
-	defer db.Close()
-	router := gin.Default()
-	router.GET("/dst",servers.Show_dst_data_location)
-	router.Run()
-
-}
-
-// func sshsynci(){
-// 	opts := &sshsync.Options{
-//         SourceDir:      "/home/araddsh/1",
-//         DestinationDir: "localhost:/home/arash/kir",
-//         Username:       "arash",
-//         Password:       "klfjhpi4sswo44riswwor??",
-//         Host:           "localhost:22",
-//     }
-
-
+	defer dbo.Close(db)
 	
-//     err := sshsync.SyncFiles(opts)
-//     if err != nil {
-//         panic(err)
-//     }
-// }
+	dbStore := &store.DBStore{DB: db}
+	h := handler.NewHandler(dbStore)
+	
+	r := gin.Default()
+	r.POST("/datasets", h.CreateDataset)
+	
+	r.Run()
+}

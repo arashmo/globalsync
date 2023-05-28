@@ -44,6 +44,12 @@ type DBStore struct {
 
 // Implement the remaining Store interface methods for DBStore
 
+func (store *DBStore) InsertDatacenter(name, location, comment string) error {
+	query := `INSERT INTO datacenters (name, location, comment) VALUES (?, ?, ?)`
+	_, err := store.DB.Exec(query, name, location, comment)
+	return err
+}
+
 func (store *DBStore) InsertRack(number, aisleNumber int, location string, datacenterID int) error {
 	query := `INSERT INTO racks (number, aisle_number, location, datacenter_id) VALUES (?, ?, ?, ?)`
 	_, err := store.DB.Exec(query, number, aisleNumber, location, datacenterID)
