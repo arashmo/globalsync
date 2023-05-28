@@ -5,18 +5,31 @@ import (
 	"log"
 	_ "github.com/go-sql-driver/mysql"
     "fmt"
+    "strings"
 )
 
 var DB *sql.DB
 
 func Connect(connection string) (*sql.DB, error) {
-    db, err := sql.Open("mysql", connection)
+    splitInfo := strings.Split(connection, "/")
+    dbName := splitInfo[len(splitInfo)-1]
+    splitInfo[len(splitInfo)-1] = "?charset=utf8&parseTime=True&loc=Local" // remove DB name
+    db, err := sql.Open("mysql", strings.Join(splitInfo, "/")) // Open DB without DB name
     if err != nil {
         return nil, fmt.Errorf("failed to connect to the database: %v", err)
     }
 
-    // Perform any additional database configuration or setup if needed
+    _, err = db.Exec("CREATE DATABASE IF NOT EXISTS " + dbName)
+    if err != nil {
+        return nil, fmt.Errorf("failed to create database: %v", err)
+    }
 
+    _, err = db.Exec("USE " + dbName)
+    if err != nil {
+        return nil, fmt.Errorf("failed to switch to database: %v", err)
+    }
+
+    // Perform any additional database configuration or setup if needed
     return db, nil
 }
 

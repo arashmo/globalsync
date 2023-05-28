@@ -9,13 +9,14 @@ import (
 )
 
 func main() {
-	dsn := "root@tcp(localhost)/dbname"
+	dsn := "root@tcp(localhost)/globalsync"
 	db, err := dbo.Connect(dsn)
 	if err != nil {
 		log.Fatalf("failed to connect to the database: %v", err)
 	}
 	defer dbo.Close(db)
-	
+	dbo.DB = db
+	dbo.InitTables() 
 	dbStore := &store.DBStore{DB: db}
 	h := handler.NewHandler(dbStore)
 	
