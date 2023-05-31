@@ -1,4 +1,3 @@
-
 DROP TABLE IF EXISTS server_datasets;
 DROP TABLE IF EXISTS attached_storage;
 DROP TABLE IF EXISTS servers;
@@ -11,7 +10,8 @@ CREATE TABLE datacenters (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(255),
   location VARCHAR(255),
-  comment VARCHAR(255)
+  comment VARCHAR(255),
+  UNIQUE KEY (name, location)
 );
 
 CREATE TABLE racks (
@@ -20,7 +20,8 @@ CREATE TABLE racks (
   aisle_number INT,
   location VARCHAR(255),
   datacenter_id INT,
-  FOREIGN KEY (datacenter_id) REFERENCES datacenters(id)
+  FOREIGN KEY (datacenter_id) REFERENCES datacenters(id),
+  UNIQUE KEY (number, aisle_number,datacenter_id)
 );
 
 CREATE TABLE owner_groups (
@@ -35,7 +36,8 @@ CREATE TABLE datasets (
   version VARCHAR(255),
   status VARCHAR(255),
   creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  update_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  update_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY (name, version)
 );
 
 CREATE TABLE servers (
@@ -48,7 +50,8 @@ CREATE TABLE servers (
   rack_id INT,
   datacenter_id INT,
   FOREIGN KEY (rack_id) REFERENCES racks(id),
-  FOREIGN KEY (datacenter_id) REFERENCES datacenters(id)
+  FOREIGN KEY (datacenter_id) REFERENCES datacenters(id),
+  UNIQUE KEY (hostname,ip_address,datacenter_id)
 );
 
 CREATE TABLE server_owner_groups (
@@ -68,13 +71,14 @@ CREATE TABLE attached_storage (
 );
 
 CREATE TABLE server_datasets (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    server_id INT NOT NULL,
-    dataset_id INT NOT NULL,
-    attached_storage_id INT NOT NULL,
-    folder_name VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (server_id) REFERENCES servers(id),
-    FOREIGN KEY (dataset_id) REFERENCES datasets(id),
-    FOREIGN KEY (attached_storage_id) REFERENCES attached_storage(id)
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  server_id INT NOT NULL,
+  dataset_id INT NOT NULL,
+  attached_storage_id INT NOT NULL,
+  folder_name VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (server_id) REFERENCES servers(id),
+  FOREIGN KEY (dataset_id) REFERENCES datasets(id),
+  FOREIGN KEY (attached_storage_id) REFERENCES attached_storage(id),
+  UNIQUE KEY (folder_name)
 );

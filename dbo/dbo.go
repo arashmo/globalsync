@@ -47,7 +47,8 @@ func InitTables() {
             id INT AUTO_INCREMENT PRIMARY KEY,
             name VARCHAR(255),
             location VARCHAR(255),
-            comment VARCHAR(255)
+            comment VARCHAR(255),
+            UNIQUE KEY (name, location)
         )
     `
     createRacksQuery := `
@@ -57,7 +58,8 @@ func InitTables() {
             aisle_number INT,
             location VARCHAR(255),
             datacenter_id INT,
-            FOREIGN KEY (datacenter_id) REFERENCES datacenters(id)
+            FOREIGN KEY (datacenter_id) REFERENCES datacenters(id),
+            UNIQUE KEY (number, aisle_number, datacenter_id)
         )
     `
     createOwnerGroupsQuery := `
@@ -73,8 +75,9 @@ func InitTables() {
             size INT,
             version VARCHAR(255),
             status VARCHAR(255),
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            update_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            UNIQUE KEY (name, version)
         )
     `
     createServersQuery := `
@@ -88,37 +91,41 @@ func InitTables() {
             rack_id INT,
             datacenter_id INT,
             FOREIGN KEY (rack_id) REFERENCES racks(id),
-            FOREIGN KEY (datacenter_id) REFERENCES datacenters(id)
+            FOREIGN KEY (datacenter_id) REFERENCES datacenters(id),
+            UNIQUE KEY (hostname, ip_address, datacenter_id)
         )
     `
     createServerOwnerGroupsQuery := `
         CREATE TABLE IF NOT EXISTS server_owner_groups (
-            id INT AUTO_INCREMENT PRIMARY KEY,
             server_id INT,
             owner_group_id INT,
+            PRIMARY KEY (server_id, owner_group_id),
             FOREIGN KEY (server_id) REFERENCES servers(id),
             FOREIGN KEY (owner_group_id) REFERENCES owner_groups(id)
-        )
-    `
-    createServerDatasetsQuery := `
-        CREATE TABLE IF NOT EXISTS server_datasets (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            server_id INT,
-            dataset_id INT,
-            attached_storage_id INT,
-            folder_name VARCHAR(255),
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (server_id) REFERENCES servers(id),
-            FOREIGN KEY (dataset_id) REFERENCES datasets(id)
         )
     `
     createAttachedStorageQuery := `
         CREATE TABLE IF NOT EXISTS attached_storage (
             id INT AUTO_INCREMENT PRIMARY KEY,
-            server_id INTEGER,
+            server_id INT,
             location VARCHAR(255) NOT NULL,
-            UNIQUE (server_id, location),
-            FOREIGN KEY (server_id) REFERENCES servers(id)
+            FOREIGN KEY (server_id) REFERENCES servers(id),
+            UNIQUE KEY (server_id, location)
+        )
+    `
+
+    createServerDatasetsQuery := `
+        CREATE TABLE IF NOT EXISTS server_datasets (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            server_id INT NOT NULL,
+            dataset_id INT NOT NULL,
+            attached_storage_id INT NOT NULL,
+            folder_name VARCHAR(255) NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (server_id) REFERENCES servers(id),
+            FOREIGN KEY (dataset_id) REFERENCES datasets(id),
+            FOREIGN KEY (attached_storage_id) REFERENCES attached_storage(id),
+            UNIQUE KEY (folder_name)
         )
     `
 
