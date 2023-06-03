@@ -1,146 +1,74 @@
 package store
 
+
 import (
 	"database/sql"
 )
 
 type Store interface {
-	// Datacenters
-	InsertDatacenter(name, location, comment string) error
-	// Add more methods for datacenters as needed
-
-	// Racks
-	InsertRack(number, aisleNumber int, location string, datacenterID int) error
-	// Add more methods for racks as needed
-
-	// Owner Groups
-	InsertOwnerGroup(name string) error
-	// Add more methods for owner groups as needed
-
-	// Datasets
-	InsertDataset(name string, size int, version, status string) error
-	// Add more methods for datasets as needed
-
-	// Servers
-	InsertServer(hostname, ipAddress string, cpuPercent, usedGpus, freeDisk, rackID, datacenterID int) error
-	// Add more methods for servers as needed
-
-	// Server Owner Groups
-	InsertServerOwnerGroup(serverID, ownerGroupID int) error
-	// Add more methods for server owner groups as needed
-
-	// Server Datasets
-	InsertServerDataset(serverID, datasetID, attachedStorageID int, folderName string) error
-	// Add more methods for server datasets as needed
-
-	// Attached Storage
-	InsertAttachedStorage(serverID int, location string) error
-	// Add more methods for attached storage as needed
+	// Upserts
+	UpsertDatacenter(id int, name, location, comment string) error
+	UpsertRack(id, number, aisleNumber int, location string, datacenterID int) error
+	UpsertOwnerGroup(id int, name string) error
+	UpsertDataset(id int, name string, size int, version, status string) error
+	UpsertServer(id int, hostname, ipAddress string, cpuPercent, usedGpus, freeDisk, rackID, datacenterID int) error
+	UpsertServerOwnerGroup(id, serverID, ownerGroupID int) error
+	UpsertServerDataset(id, serverID, datasetID, attachedStorageID int, folderName string) error
+	UpsertAttachedStorage(id, serverID int, location string) error
 }
 
 type DBStore struct {
 	DB *sql.DB
 }
 
-// Implement the remaining Store interface methods for DBStore
-
-func (store *DBStore) InsertDatacenter(name, location, comment string) error {
-	query := `INSERT INTO datacenters (name, location, comment) VALUES (?, ?, ?)`
-	_, err := store.DB.Exec(query, name, location, comment)
+func (store *DBStore) UpsertDatacenter(id int, name, location, comment string) error {
+	query := `INSERT INTO datacenters (id, name, location, comment) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE name = VALUES(name), location = VALUES(location), comment = VALUES(comment)`
+	_, err := store.DB.Exec(query, id, name, location, comment)
 	return err
 }
 
-func (store *DBStore) InsertRack(number, aisleNumber int, location string, datacenterID int) error {
-	query := `INSERT INTO racks (number, aisle_number, location, datacenter_id) VALUES (?, ?, ?, ?)`
-	_, err := store.DB.Exec(query, number, aisleNumber, location, datacenterID)
+func (store *DBStore) UpsertRack(id, number, aisleNumber int, location string, datacenterID int) error {
+	query := `INSERT INTO racks (id, number, aisle_number, location, datacenter_id) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE number = VALUES(number), aisle_number = VALUES(aisle_number), location = VALUES(location), datacenter_id = VALUES(datacenter_id)`
+	_, err := store.DB.Exec(query, id, number, aisleNumber, location, datacenterID)
 	return err
 }
 
-func (store *DBStore) InsertOwnerGroup(name string) error {
-	query := `INSERT INTO owner_groups (name) VALUES (?)`
-	_, err := store.DB.Exec(query, name)
+func (store *DBStore) UpsertOwnerGroup(id int, name string) error {
+	query := `INSERT INTO owner_groups (id, name) VALUES (?, ?) ON DUPLICATE KEY UPDATE name = VALUES(name)`
+	_, err := store.DB.Exec(query, id, name)
 	return err
 }
 
-func (store *DBStore) InsertDataset(name string, size int, version, status string) error {
-	query := `INSERT INTO datasets (name, size, version, status) VALUES (?, ?, ?, ?)`
-	_, err := store.DB.Exec(query, name, size, version, status)
+func (store *DBStore) UpsertDataset(id int, name string, size int, version, status string) error {
+	query := `INSERT INTO datasets (id, name, size, version, status) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE name = VALUES(name), size = VALUES(size), version = VALUES(version), status = VALUES(status)`
+	_, err := store.DB.Exec(query, id, name, size, version, status)
 	return err
 }
 
-func (store *DBStore) InsertServer(hostname, ipAddress string, cpuPercent, usedGpus, freeDisk, rackID, datacenterID int) error {
-	query := `INSERT INTO servers (hostname, ip_address, cpupercent, usedgpus, freedisk, rack_id, datacenter_id) VALUES (?, ?, ?, ?, ?, ?, ?)`
-	_, err := store.DB.Exec(query, hostname, ipAddress, cpuPercent, usedGpus, freeDisk, rackID, datacenterID)
+func (store *DBStore) UpsertServer(id int, hostname, ipAddress string, cpuPercent, usedGpus, freeDisk, rackID, datacenterID int) error {
+	query := `INSERT INTO servers (id, hostname, ip_address, cpupercent, usedgpus, freedisk, rack_id, datacenter_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE hostname = VALUES(hostname), ip_address = VALUES(ip_address), cpupercent = VALUES(cpupercent), usedgpus = VALUES(usedgpus), freedisk = VALUES(freedisk), rack_id = VALUES(rack_id), datacenter_id = VALUES(datacenter_id)`
+	_, err := store.DB.Exec(query, id, hostname, ipAddress, cpuPercent, usedGpus, freeDisk, rackID, datacenterID)
 	return err
 }
 
-func (store *DBStore) InsertServerOwnerGroup(serverID, ownerGroupID int) error {
-	query := `INSERT INTO server_owner_groups (server_id, owner_group_id) VALUES (?, ?)`
-	_, err := store.DB.Exec(query, serverID, ownerGroupID)
+func (store *DBStore) UpsertServerOwnerGroup(id, serverID, ownerGroupID int) error {
+	query := `INSERT INTO server_owner_groups (id, server_id, owner_group_id) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE server_id = VALUES(server_id), owner_group_id = VALUES(owner_group_id)`
+	_, err := store.DB.Exec(query, id, serverID, ownerGroupID)
 	return err
 }
 
-func (store *DBStore) InsertServerDataset(serverID, datasetID, attachedStorageID int, folderName string) error {
-	query := `INSERT INTO server_datasets (server_id, dataset_id, attached_storage_id, folder_name) VALUES (?, ?, ?, ?)`
-	_, err := store.DB.Exec(query, serverID, datasetID, attachedStorageID, folderName)
+func (store *DBStore) UpsertServerDataset(id, serverID, datasetID, attachedStorageID int, folderName string) error {
+	query := `INSERT INTO server_datasets (id, server_id, dataset_id, attached_storage_id, folder_name) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE server_id = VALUES(server_id), dataset_id = VALUES(dataset_id), attached_storage_id = VALUES(attached_storage_id), folder_name = VALUES(folder_name)`
+	_, err := store.DB.Exec(query, id, serverID, datasetID, attachedStorageID, folderName)
 	return err
 }
 
-func (store *DBStore) InsertAttachedStorage(serverID int, location string) error {
-	query := `INSERT INTO attached_storage (server_id, location) VALUES (?, ?)`
-	_, err := store.DB.Exec(query, serverID, location)
+func (store *DBStore) UpsertAttachedStorage(id, serverID int, location string) error {
+	query := `INSERT INTO attached_storage (id, server_id, location) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE server_id = VALUES(server_id), location = VALUES(location)`
+	_, err := store.DB.Exec(query, id, serverID, location)
 	return err
 }
 
-// Update functions for DBStore
-
-func (store *DBStore) UpdateDatacenter(id int, name, location, comment string) error {
-	query := `UPDATE datacenters SET name = ?, location = ?, comment = ? WHERE id = ?`
-	_, err := store.DB.Exec(query, name, location, comment, id)
-	return err
-}
-
-func (store *DBStore) UpdateRack(id, number, aisleNumber int, location string, datacenterID int) error {
-	query := `UPDATE racks SET number = ?, aisle_number = ?, location = ?, datacenter_id = ? WHERE id = ?`
-	_, err := store.DB.Exec(query, number, aisleNumber, location, datacenterID, id)
-	return err
-}
-
-func (store *DBStore) UpdateOwnerGroup(id int, name string) error {
-	query := `UPDATE owner_groups SET name = ? WHERE id = ?`
-	_, err := store.DB.Exec(query, name, id)
-	return err
-}
-
-func (store *DBStore) UpdateDataset(id int, name string, size int, version, status string) error {
-	query := `UPDATE datasets SET name = ?, size = ?, version = ?, status = ? WHERE id = ?`
-	_, err := store.DB.Exec(query, name, size, version, status, id)
-	return err
-}
-
-func (store *DBStore) UpdateServer(id int, hostname, ipAddress string, cpuPercent, usedGpus, freeDisk, rackID, datacenterID int) error {
-	query := `UPDATE servers SET hostname = ?, ip_address = ?, cpupercent = ?, usedgpus = ?, freedisk = ?, rack_id = ?, datacenter_id = ? WHERE id = ?`
-	_, err := store.DB.Exec(query, hostname, ipAddress, cpuPercent, usedGpus, freeDisk, rackID, datacenterID, id)
-	return err
-}
-
-func (store *DBStore) UpdateServerOwnerGroup(id, serverID, ownerGroupID int) error {
-	query := `UPDATE server_owner_groups SET server_id = ?, owner_group_id = ? WHERE id = ?`
-	_, err := store.DB.Exec(query, serverID, ownerGroupID, id)
-	return err
-}
-
-func (store *DBStore) UpdateServerDataset(id, serverID, datasetID, attachedStorageID int, folderName string) error {
-	query := `UPDATE server_datasets SET server_id = ?, dataset_id = ?, attached_storage_id = ?, folder_name = ? WHERE id = ?`
-	_, err := store.DB.Exec(query, serverID, datasetID, attachedStorageID, folderName, id)
-	return err
-}
-
-func (store *DBStore) UpdateAttachedStorage(id, serverID int, location string) error {
-	query := `UPDATE attached_storage SET server_id = ?, location = ? WHERE id = ?`
-	_, err := store.DB.Exec(query, serverID, location, id)
-	return err
-}
 
 // Delete functions for DBStore
 

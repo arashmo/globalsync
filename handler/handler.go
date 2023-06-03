@@ -30,11 +30,7 @@ func (h *Handler) CreateDataset(c *gin.Context) {
 		return
 	}
 
-	err := h.Store.InsertDataset(req.Name, req.Size, req.Version, req.Status)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
+
 
 	c.Status(http.StatusCreated)
 }
